@@ -1,0 +1,21 @@
+LONG UnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
+{
+    PCONTEXT ctx = pExceptionInfo->ContextRecord;
+    ctx->Eip += 3; // Skip \xCC\xEB\x??
+    return EXCEPTION_CONTINUE_EXECUTION;
+}
+
+bool Check()
+{
+    bool bDebugged = true;
+    SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)UnhandledExceptionFilter);
+    __asm
+    {
+        int 3                      // CC
+        jmp near being_debugged    // EB ??
+    }
+    bDebugged = false;
+
+being_debugged:
+    return bDebugged;
+}
