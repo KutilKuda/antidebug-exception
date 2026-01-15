@@ -1,0 +1,14 @@
+bool Check()
+{
+    __try
+    {
+        RaiseException(DBG_CONTROL_C, 0, 0, NULL);
+        return true;
+    }
+    __except(DBG_CONTROL_C == GetExceptionCode()
+        ? EXCEPTION_EXECUTE_HANDLER 
+        : EXCEPTION_CONTINUE_SEARCH)
+    {
+        return false;
+    }
+}
